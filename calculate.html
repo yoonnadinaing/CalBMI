@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      background:#ddecbb;
+      padding:20px;
+      margin:0;
+    }
+    h1 { 
+      color:#030303; 
+      text-align:center; 
+      margin-bottom:20px;
+      font-size: 1.8em; 
+    }
+    .container {
+      width: 100%; 
+      max-width:600px; 
+      margin:0 auto;
+    }
+    .card {
+      background:rgb(134, 241, 120);
+      padding:20px;
+      border-radius:10px;
+      margin-bottom:15px;
+      box-shadow:0 3px 6px rgba(0,0,0,0.1);
+    }
+    label { display:block; margin-top:10px; }
+    input,select{
+      padding:10px;
+      margin-top:6px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      width:100%;
+      box-sizing:border-box;
+      font-size: 1em; 
+    }
+
+    .btn-btn-back {
+        background: #101010;
+        color: white;
+        padding: 10px 25px;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 1em;
+        width: 100%;
+        box-sizing: border-box;
+        margin-top: 12px; 
+        transition: background 0.3s;
+    }
+    .btn-btn-back:hover {
+        background: #125a9c;
+    }
+
+    .back-btn {
+        background: #0f0e0e;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 7px;
+        border: none;
+        cursor: pointer;
+        font-size: 1em;
+        display: block;
+        margin: 20px auto; 
+        transition: background 0.3s;
+    }
+    .back-btn:hover {
+        background: #a50d0d;
+    }
+
+   
+    @media (min-width:600px) {
+      .form-row {
+        display:flex;
+        gap:10px;
+      }
+      .form-row input {
+        flex:1;
+      }
+    }
+
+    
+    @media (max-width:500px) {
+      h1 { font-size: 1.4em; } 
+      .intro h4 { font-size: 0.9em; } 
+      .card { padding:15px; } 
+      input, select, button { font-size: 0.9em; padding:8px; }
+      .form-row { display:block; } 
+    }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>⚖️ BMI Calculator</h2>
+  <div class="card">
+    <div class="form-row">
+      <div style="flex:1">
+        <label>Height:</label>
+        <input id="height" type="number" placeholder="Enter height">
+      </div>
+      <div style="flex:1">
+        <label>Weight:</label>
+        <input id="weight" type="number" placeholder="Enter weight">
+      </div>
+    </div>
+    
+    <label>Units:</label>
+    <select id="unit">
+      <option value="metric">Metric (cm, kg)</option>
+      <option value="imperial">Imperial (ft, lbs)</option>
+    </select>
+    
+    <button class="btn-btn-back" onclick="calculateBMI()">Calculate</button>
+    <div id="output" class="result"></div>
+  </div>
+
+  <div class="card">
+    <h3>📜 Check History (for last 5days)</h3>
+    <ul id="history"></ul>
+  </div>
+</div>
+
+<button class="back-btn" onclick="window.location.href='index.html'">Back</button>
+
+<script>
+let historyList = [];
+
+function calculateBMI() {
+  let h = parseFloat(document.getElementById("height").value);
+  let w = parseFloat(document.getElementById("weight").value);
+  let unit = document.getElementById("unit").value;
+
+  if (!h || !w || h<=0 || w<=0) {
+    alert("Please enter valid values.");
+    return;
+  }
+
+  let heightM, weightKg;
+
+  if (unit === "metric") {
+    heightM = h / 100; // cm to meters
+    weightKg = w;
+  } else {
+    heightM = h * 0.3048; // ft to meters
+    weightKg = w * 0.4536; // lbs to kg
+  }
+
+  let bmi = (weightKg / (heightM*heightM)).toFixed(1);
+  let category, cls;
+
+  if (bmi < 18.5) { category="Underweight"; cls="under"; }
+  else if (bmi < 25) { category="Normal"; cls="normal"; }
+  else if (bmi < 30) { category="Overweight"; cls="over"; }
+  else { category="Obese"; cls="obese"; }
+
+  document.getElementById("output").innerHTML = 
+    `Your BMI: <span class="${cls}">${bmi}</span> (${category})`;
+
+  
+  let entry = `${bmi} (${category})`;
+  historyList.unshift(entry);
+  if (historyList.length > 5) historyList.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  let list = document.getElementById("history");
+  list.innerHTML = "";
+  historyList.forEach(item => {
+    let li = document.createElement("li");
+    li.textContent = item;
+    list.appendChild(li);
+  });
+}
+</script>
+
+</body>
+</body>
+</html>
